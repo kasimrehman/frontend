@@ -4,9 +4,12 @@ import OrderList from './pages/OrderList';
 import OrderDetails from './pages/OrderDetails';
 import OrderForm from './pages/OrderForm';
 
+import ZoneInfo from './ZoneInfo';
+
 function App() {
   return (
     <Router>
+      <ZoneInfo />
       <nav style={{ padding: '1rem', background: '#f0f0f0' }}>
         <Link to="/orders">Orders</Link> | <Link to="/orders/new">Create Order</Link>
       </nav>

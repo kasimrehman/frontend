@@ -4,8 +4,34 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 require('dotenv').config();
 const app = express();
 
+
+// Zone info storage
+let zoneInfo = 'unknown';
+const axios = require('axios');
+
+// Fetch zone info from metadata endpoint on startup
+async function fetchZoneInfo() {
+  try {
+    // Azure example endpoint; change if needed for your cloud
+    const response = await axios.get('http://169.254.169.254/metadata/instance/compute/zone?api-version=2021-02-01&format=text', {
+      headers: { 'Metadata': 'true' },
+      timeout: 2000
+    });
+    zoneInfo = response.data;
+    console.log('Zone info fetched:', zoneInfo);
+  } catch (err) {
+    console.error('Failed to fetch zone info:', err.message);
+  }
+}
+fetchZoneInfo();
+
 // Serve static files from React build
 app.use(express.static(path.join(__dirname, 'build')));
+
+// /zone endpoint
+app.get('/zone', (req, res) => {
+  res.json({ zone: zoneInfo });
+});
 
 // Proxy API requests to internal app tier
 const internalApiUrl = process.env.INTERNAL_APP_TIER_URL;
