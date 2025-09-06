@@ -4,12 +4,19 @@ import api from '../api';
 
 function OrderList() {
   const [orders, setOrders] = useState([]);
+  const [zone, setZone] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     api.get('/orders')
-      .then(res => setOrders(res.data))
-      .catch(() => setOrders([]))
+      .then(res => {
+        setOrders(res.data.orders || []);
+        setZone(res.data.zone || '');
+      })
+      .catch(() => {
+        setOrders([]);
+        setZone('');
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -51,6 +58,11 @@ function OrderList() {
         </tbody>
       </table>
       <Link to="/orders/new">Create New Order</Link>
+      <div style={{ marginTop: '2rem', color: '#555', fontStyle: 'italic' }}>
+        {zone && (
+          <span>API used is running in Zone {zone}</span>
+        )}
+      </div>
     </div>
   );
 }
